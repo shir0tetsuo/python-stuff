@@ -77,7 +77,7 @@ class Chain:
 
         self.chain_blocks = []
 
-        self.weather_channel = 'arnprior'
+        self.weather_channel = '' # Whatever city you want defaulted to
 
         # If any of the chains have data in their files, append them to self chains.
         for data in chain_blocks_raw:
