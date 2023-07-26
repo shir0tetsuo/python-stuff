@@ -61,7 +61,7 @@ class MyClient(discord.Client):
 
             if len(chat_record.split()) > 2048:
                 print('Had to trim!')
-                chat_record = AICharacter + chat_record.replace(AICharacter,'')[1024:]
+                chat_record =  AICharacter + " ".join(chat_record.replace(AICharacter,'').split()[2048:])
 
             # Send chat_record / user_message with that.
             headers = {
