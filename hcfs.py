@@ -4,7 +4,7 @@ from datetime import timedelta
 
 # Modify as desired.
 folder_name = '.hcfs'
-main_folder = f'{os.getcwd()}{folder_name}'
+main_folder = f'{os.getcwd()}/{folder_name}'
 program_version = '1.0.0'
 
 # Ensure main folder path exists
