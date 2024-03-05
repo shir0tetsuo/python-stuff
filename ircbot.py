@@ -148,4 +148,4 @@ class ShadowServ(irc.bot.SingleServerIRCBot):
         elif event.type == 'privmsg':
             return self.connection.notice(event.source.nick, error_message)
 
-BOT  = ShadowServ("#journey,#sparring,#fuar",NICK,ADDR).start()
+BOT  = ShadowServ(CH,NICK,ADDR).start()
