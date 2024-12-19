@@ -6,6 +6,7 @@ import matplotlib.colors as mcolors
 import random
 import noise
 import os
+import uuid
 
 # https://terrafans.xyz/antenna/
 # https://terraforms.oolong.lol/terraform
@@ -63,7 +64,8 @@ def create_heatmap_with_symbols(
         text=None, 
         cmap='viridis',
         save:bool=True,
-        save_name='heatmap_with_symbols_shifted.png'):
+        save_name='heatmap_with_symbols_shifted.png',
+        display_zone:bool=False):
     np.random.seed(seed)  # Ensure reproducibility with seed
 
     # Create a colormap for the heatmap
@@ -92,6 +94,10 @@ def create_heatmap_with_symbols(
     if text:
         ax.text(.94, -0.01, text, ha='center', va='center', fontsize=12, color='gray', transform=ax.transAxes)
     
+    if display_zone:
+        #ax.text(.1, -0.01, f'{"".join(glyphs)}', ha='center', va='center', fontsize=12, color='gray', fontproperties=(fm.FontProperties(fname=font_path) if font_path else None), transform=ax.transAxes)
+        ax.text(.2, -0.01, f'{save_name.replace(".png","")}', ha='center', va='center', fontsize=12, color='gray', transform=ax.transAxes)
+
     if save:
         # Save the figure with high resolution (higher dpi)
         plt.savefig(save_name, dpi=dpi, bbox_inches='tight')  # Save image with larger resolution
@@ -189,15 +195,32 @@ text_input = st.sidebar.text_input('Custom Label', None)
 
 tab1, tab2, tab3, tab4 = st.sidebar.tabs(['Glyphs & Font', 'Heightmap', 'Seed', 'Saving'])
 
-glyph_raw = tab1.text_input('Glyphs', '𓂧𓆑𓏏𓎛𓋴𓇋𓌳𓃀𓆗𓆀𓅱𓆠𓆉𓎡𓍯𓃥𓃣𓈖𓇋𓃢𓃦')
-glyphs = [i for i in glyph_raw]
+show_info = tab1.toggle('Show Info', False)
+
+manual_glyphs = tab1.toggle('Manual Glyphs', True)
+
+if manual_glyphs:
+    glyph_raw = tab1.text_input('Glyphs', '𓂧𓆑𓏏𓎛𓋴𓇋𓌳𓃀𓆗𓆀𓅱𓆠𓆉𓎡𓍯𓃥𓃣𓈖𓇋𓃢𓃦')
+    glyphs_select = "Manual"
+    glyphs = [i for i in glyph_raw]
+else:
+    glyph_table = {
+        'Egyptian1': '𓂧𓆑𓏏𓎛𓋴𓇋𓌳𓃀𓆗𓆀𓅱𓆠𓆉𓎡𓍯𓃥𓃣𓈖𓇋𓃢𓃦',
+        'Jackals1': '𓃢𓃦𓃥𓃣𓁢𓃤𓃧𓃨',
+        'Jackals2': '𓃢𓃦𓃥𓃣',
+    }
+    glyph_opts = [k for k in glyph_table.keys()]
+    glyphs_select = tab1.selectbox('Glyph Table', glyph_opts)
+    glyphs = [i for i in glyph_table[glyphs_select]]
+    tab1.code("".join(glyphs))
+
 
 # Path to the Noto font (adjust as needed)
 font_path = tab1.text_input('Fonts','/usr/share/fonts/truetype/noto/NotoSansEgyptianHieroglyphs-Regular.ttf')  # Adjust for your system
 
 hm_opts = ['Unorganized', 'Noise', 'String', 'Template']
 
-hm_select = tab2.selectbox('Heightmap', hm_opts)
+hm_select = tab2.selectbox('Heightmap', hm_opts, index=3)
 
 randomize_seed = tab3.toggle('Randomize Seed', True)
 
@@ -209,9 +232,7 @@ seed = tab3.number_input('Seed',0,100000, (random_seed if randomize_seed else 42
 
 save_image = tab4.toggle('Save Image', False)
 
-name_encode = tab4.toggle('Encode Details as Name', False)
-
-image_name = tab4.text_input('Image Name', (f'{hm_select}_{selected_cmap}_{seed}.png' if name_encode else 'heatmap_with_symbols_shifted.png'), disabled=(False if save_image and not name_encode else True))
+name_encode = tab4.toggle('Encode Details as Name', True)
 
 hm_inversion = tab2.toggle('Inversion', False)
 
@@ -244,8 +265,13 @@ with st.expander('Data', icon='🛂'):
     st.code('\n'.join([' '.join(map(str, row)) for row in Heightmap]))
 
 st.sidebar.markdown('---')
+if hm_select == hm_opts[3]:
+    selected_template = template_select.replace('.txt','')
+else:
+    selected_template = 'seed'
+image_name = tab4.text_input('Image Name', (f'{hm_select}_{selected_template}_{glyphs_select}_{selected_cmap}_{seed}.png' if name_encode else 'heatmap_with_symbols_shifted.png'), disabled=(False if save_image and not name_encode else True))
 
 st.sidebar.write(f'Saving is {"Enabled" if save_image else "Disabled"}')
 
 if st.sidebar.button('Generate', icon='🏭'):
-    create_heatmap_with_symbols(Heightmap, glyphs, seed=(random.randint(0,100000) if more_noise else seed), font_path=font_path, figsize=(16, 16), dpi=300, text=text_input, cmap=selected_cmap, save=save_image, save_name=image_name)
+    create_heatmap_with_symbols(Heightmap, glyphs, seed=(random.randint(0,100000) if more_noise else seed), font_path=font_path, figsize=(16, 16), dpi=300, text=text_input, cmap=selected_cmap, save=save_image, save_name=image_name, display_zone=show_info)
