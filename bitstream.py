@@ -11,6 +11,8 @@ import uuid
 # https://terrafans.xyz/antenna/
 # https://terraforms.oolong.lol/terraform
 
+st.write('🐠 bitstream')
+
 class SavedMaps:
 
     def __init__(self):
@@ -185,7 +187,7 @@ def string_to_heightmap(input_string, height=32, width=32, value_range=(0, 9)):
     
     return heightmap
 
-cmap_list = ['viridis', 'Reds', 'PuBu', 'Greys', 'Purples', 'Blues', 'Greens', 'YlOrBr', 'YlOrRd', 'YlGnBu', 'BuGn', 'YlGn', 'PuRd', 'bone', 'pink', 'spring', 'summer', 'autumn', 'cool', 'Wistia', 'hot', 'afmhot', 'copper', 'PiYg', 'PRGn', 'Spectral', 'twilight', 'hsv', 'Dark2', 'Pastel1', 'Pastel2', 'plasma', 'inferno', 'magma', 'cividis', 'jet', 'coolwarm', 'YlGnBu', 'tab20c']
+cmap_list = ['viridis', 'cividis', 'Reds', 'PuBu', 'Greys', 'Purples', 'Blues', 'Greens', 'YlOrBr', 'YlOrRd', 'YlGnBu', 'BuGn', 'YlGn', 'PuRd', 'bone', 'pink', 'spring', 'summer', 'autumn', 'cool', 'Wistia', 'hot', 'afmhot', 'copper', 'PiYg', 'PRGn', 'Spectral', 'twilight', 'hsv', 'Dark2', 'Pastel1', 'Pastel2', 'plasma', 'inferno', 'magma', 'cividis', 'jet', 'coolwarm', 'YlGnBu', 'tab20c']
 selected_cmap = st.sidebar.selectbox("Choose a colormap", cmap_list)
 
 show_cmap_preview(selected_cmap)
